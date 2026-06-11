@@ -7,19 +7,27 @@ import java.util.Scanner;
 public class ChangeProfile {
 
     static void YourProfile(User u1) {
-        File profileFile = new File(u1.getUserFolder(), "P_" + u1.getUserName() + ".txt");
-        try (BufferedReader reader = new BufferedReader(new FileReader(profileFile))) {
-            String line;
-            System.out.println("\u001B[36m=== Your Profile ===\u001B[0m");
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+    File profileFile = new File(u1.getUserFolder(), "P_" + u1.getUserName() + ".txt");
+    try (BufferedReader reader = new BufferedReader(new FileReader(profileFile))) {
+        String line;
+        System.out.println("\u001B[36m=== Your Profile ===\u001B[0m");
+        while ((line = reader.readLine()) != null) {
+            // Skip sensitive fields
+            if (line.startsWith("UserID: ") ||
+                line.startsWith("Primary Key: ") ||
+                line.startsWith("Secondary Key: ")) {
+                continue;
             }
-            System.out.println("\u001B[36m====================\u001B[0m");
-        } catch (IOException e) {
-            System.out.println("User not found!..");
+            System.out.println(line);
         }
+        // Show password status without revealing the value
+        System.out.println("Primary Key: " + "\u001B[32m[SET]\u001B[0m");
+        System.out.println("Secondary Key: " + "\u001B[32m[SET]\u001B[0m");
+        System.out.println("\u001B[36m====================\u001B[0m");
+    } catch (IOException e) {
+        System.out.println("User not found!..");
     }
-
+}
     public static void changeYourProfile(User user) {
         Scanner s1 = new Scanner(System.in);
         while (true) {
@@ -54,7 +62,7 @@ public class ChangeProfile {
                     System.out.print("Enter new password: ");
                     String newPassword = s1.nextLine().trim();
                     if (!newPassword.isEmpty()) {
-                        user.setPrimary_key(newPassword);
+                        user.setPrimary_key(PasswordUtils.hashPassword(newPassword));
                         System.out.println("Password updated successfully.");
 
                     } else {
@@ -66,7 +74,7 @@ public class ChangeProfile {
                     System.out.print("Enter new secondary password: ");
                     String newSecondaryPassword = s1.nextLine().trim();
                     if (!newSecondaryPassword.isEmpty()) {
-                        user.setSecondary_key(newSecondaryPassword);
+                        user.setSecondary_key(PasswordUtils.hashPassword(newSecondaryPassword));
                         System.out.println("Secondary password updated successfully.");
                     } else {
                         System.out.println("Secondary Password can't be empty!");

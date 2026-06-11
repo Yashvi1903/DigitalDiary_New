@@ -17,7 +17,7 @@ public class Diary {
     public static String getDiaryIndexPath(User u) {
         return "Users/" + u.getUserID() + "/diary_index.txt";
     }
-    
+
     public String getDiaryname() {
         return diaryname;
     }
@@ -46,7 +46,8 @@ public class Diary {
         while (true) {
             UserFileManager.loadFromIndexFile();
             System.out.println();
-            System.out.println("\u001B[95m-------welcome Back to " + u1.getDiaryName() + ", by " + u1.getName() + "--------\u001B[0m");
+            System.out.println("\u001B[95m-------welcome Back to " + u1.getDiaryName() + ", by " + u1.getName()
+                    + "--------\u001B[0m");
             Scanner s1 = new Scanner(System.in);
             System.out.println();
             System.out.println("1.change profile");
@@ -73,7 +74,7 @@ public class Diary {
                         continue;
                     case 2:
                         Diary selectedDiary = showMyDiariesMenu(u1);
-                        if(selectedDiary != null) {
+                        if (selectedDiary != null) {
                             Entry.menu(selectedDiary, u1);
                         }
                         continue;
@@ -100,8 +101,47 @@ public class Diary {
         if (UserFileManager.getDiaryIndex().isEmpty()) {
             System.out.println();
             System.out.println("\u001B[33m ******** No diaries found...Let's create one! ********\u001B[0m");
-            System.out.print("Which diary you want to make(personal Diary,Work Diary,special Diary..etc): ");
-            String diaryname = s1.nextLine().trim();
+            // System.out.print("Which diary you want to make(personal Diary,Work
+            // Diary,special Diary..etc): ");
+            // String diaryname = s1.nextLine().trim();
+            System.out.println("What type of diary do you want to create?");
+            System.out.println("╔══════════════════════════════════╗");
+            System.out.println("║  1. Personal Diary               ║");
+            System.out.println("║  2. Work Diary                   ║");
+            System.out.println("║  3. Travel Diary                 ║");
+            System.out.println("║  4. Dream Diary                  ║");
+            System.out.println("║  5. Custom Name                  ║");
+            System.out.println("╚══════════════════════════════════╝");
+            System.out.print("Enter your choice: ");
+
+            String diaryname;
+            try {
+                int typeChoice = Integer.parseInt(s1.nextLine().trim());
+                switch (typeChoice) {
+                    case 1:
+                        diaryname = "Personal Diary";
+                        break;
+                    case 2:
+                        diaryname = "Work Diary";
+                        break;
+                    case 3:
+                        diaryname = "Travel Diary";
+                        break;
+                    case 4:
+                        diaryname = "Dream Diary";
+                        break;
+                    case 5:
+                        System.out.print("Enter your custom diary name: ");
+                        diaryname = s1.nextLine().trim();
+                        break;
+                    default:
+                        System.out.println("Invalid choice, setting as Personal Diary.");
+                        diaryname = "Personal Diary";
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input, setting as Personal Diary.");
+                diaryname = "Personal Diary";
+            }
             String diaryid = UUID.randomUUID().toString();
             File folder = new File("Users/" + u1.getUserID() + "/" + diaryid);
             if (!folder.exists()) {
@@ -114,11 +154,11 @@ public class Diary {
         while (true) {
             System.out.println();
             System.out.println("****** \u001b[1;31mYour Diaries \u001B[0m *********");
-            
+
             // Create a map to store the index-to-diaryName mapping
             Map<Integer, String> indexToDiary = new HashMap<>();
             int index = 1;
-            
+
             // Display diaries with numbers
             for (Map.Entry<String, String> entry : UserFileManager.getDiaryIndex().entrySet()) {
                 String diaryName = entry.getKey();
@@ -126,28 +166,26 @@ public class Diary {
                 indexToDiary.put(index, diaryName);
                 index++;
             }
-            
+
             System.out.println();
             System.out.println("Enter the number of the diary you want to open, or type 'new' to create one: ");
             String input = s1.nextLine().trim();
-            
+
             if (input.equalsIgnoreCase("new")) {
                 while (true) {
                     System.out.println("Enter new diary name: ");
                     String newDiaryName = s1.nextLine().trim();
 
-                    boolean exist=false;
-                    String MatchedName="";
-                    for(String existingName: UserFileManager.getDiaryIndex().keySet())
-                    {
-                    if (existingName.equalsIgnoreCase(newDiaryName)) {
-                        exist=true;
-                        MatchedName=existingName;
-                        break;
+                    boolean exist = false;
+                    String MatchedName = "";
+                    for (String existingName : UserFileManager.getDiaryIndex().keySet()) {
+                        if (existingName.equalsIgnoreCase(newDiaryName)) {
+                            exist = true;
+                            MatchedName = existingName;
+                            break;
+                        }
                     }
-                }
-                    if(exist)
-                    {
+                    if (exist) {
                         System.out.println("A diary with this name already exists. ");
                         System.out.println();
                         System.out.println("Do you want to open it? (yes/no): ");
@@ -163,45 +201,45 @@ public class Diary {
                             continue;
                         }
                     }
-                    String newDiaryID=UUID.randomUUID().toString();
+                    String newDiaryID = UUID.randomUUID().toString();
                     File folder = new File("Users/" + u1.getUserID() + "/" + newDiaryID);
-                if (!folder.exists()) {
-                    folder.mkdirs();
-                }
-                return new Diary(u1, newDiaryName, newDiaryID, true);
-            }
-        } else {
-            // Try to parse input as a number
-            try {
-                int choice = Integer.parseInt(input);
-                String selectedDiaryName = indexToDiary.get(choice);
-                
-                if (selectedDiaryName != null) {
-                    String diaryID = UserFileManager.getDiaryIndex().get(selectedDiaryName);
-                    System.out.println("Diary opened: " + selectedDiaryName);
-                    Diary existingDiary = UserFileManager.getDiaryObjMap().getOrDefault(selectedDiaryName,
-                        new Diary(u1, selectedDiaryName, diaryID, false));
-                    return existingDiary;
-                } else {
-                    System.out.println("Invalid diary number. Try again.");
-                }
-            } catch (NumberFormatException e) {
-                // If not a number, try to match by name (for backward compatibility)
-                boolean found = false;
-                for (Map.Entry<String, String> entry : UserFileManager.getDiaryIndex().entrySet()) {
-                    String diaryName = entry.getKey();
-                    String diaryID = entry.getValue();
-
-                    if (diaryName.equalsIgnoreCase(input)) {
-                        System.out.println("Diary opened: " + diaryName);
-                        Diary existingDiary = UserFileManager.getDiaryObjMap().getOrDefault(diaryName,
-                                new Diary(u1, diaryName, diaryID, false));
-                        return existingDiary;
+                    if (!folder.exists()) {
+                        folder.mkdirs();
                     }
+                    return new Diary(u1, newDiaryName, newDiaryID, true);
                 }
-                System.out.println("Diary not found. Try again.");
+            } else {
+                // Try to parse input as a number
+                try {
+                    int choice = Integer.parseInt(input);
+                    String selectedDiaryName = indexToDiary.get(choice);
+
+                    if (selectedDiaryName != null) {
+                        String diaryID = UserFileManager.getDiaryIndex().get(selectedDiaryName);
+                        System.out.println("Diary opened: " + selectedDiaryName);
+                        Diary existingDiary = UserFileManager.getDiaryObjMap().getOrDefault(selectedDiaryName,
+                                new Diary(u1, selectedDiaryName, diaryID, false));
+                        return existingDiary;
+                    } else {
+                        System.out.println("Invalid diary number. Try again.");
+                    }
+                } catch (NumberFormatException e) {
+                    // If not a number, try to match by name (for backward compatibility)
+                    boolean found = false;
+                    for (Map.Entry<String, String> entry : UserFileManager.getDiaryIndex().entrySet()) {
+                        String diaryName = entry.getKey();
+                        String diaryID = entry.getValue();
+
+                        if (diaryName.equalsIgnoreCase(input)) {
+                            System.out.println("Diary opened: " + diaryName);
+                            Diary existingDiary = UserFileManager.getDiaryObjMap().getOrDefault(diaryName,
+                                    new Diary(u1, diaryName, diaryID, false));
+                            return existingDiary;
+                        }
+                    }
+                    System.out.println("Diary not found. Try again.");
+                }
             }
         }
-      }
     }
 }

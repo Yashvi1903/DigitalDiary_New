@@ -144,7 +144,29 @@ public class UserFileManager {
         System.out.println("\u001B[32mUsername updated successfully!\u001B[0m");
     }
 
+    // Rewrites the entire entry_index.txt from the current in-memory maps
+    public static void saveEntryIndex(Diary diary, User user) {
+        String path = "Users/" + user.getUserID() + "/" + diary.getDiaryID() + "/entry_index.txt";
+        File indexFile = new File(path);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexFile, false))) { // false = overwrite
+            for (Map.Entry<String, String> e : titleToPath.entrySet()) {
+                String title = e.getKey();
+                String filePath = e.getValue();
+                Entry entry = pathToEntry.get(filePath);
+                if (entry != null) {
+                    writer.write(entry.getDate() + "=" + filePath + "=" + title);
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Failed to update entry index: " + e.getMessage());
+        }
+    }
+
     public static void loadEntryIndex(Diary diary, User user) {
+        titleToPath.clear();
+        pathToEntry.clear();
         String path = "Users/" + user.getUserID() + "/" + diary.getDiaryID() + "/entry_index.txt";
         File file = new File(path);
 
@@ -191,8 +213,14 @@ public class UserFileManager {
                         }
                     }
 
-                    Entry entry = new Entry(date, fileTitle, content.toString(), mood, tag, diary, user, filepath,
-                            false);
+                    // Entry entry = new Entry(date, fileTitle, content.toString(), mood, tag,
+                    // diary, user, filepath,
+                    // false);
+                    Entry entry = new Entry.Builder(date, fileTitle, diary, user)
+                            .content(content.toString())
+                            .mood(mood)
+                            .filepath(filepath)
+                            .build();
                     titleToPath.put(fileTitle, filepath);
                     pathToEntry.put(filepath, entry);
                 }
@@ -296,7 +324,7 @@ public class UserFileManager {
             writer.write("Date: " + entry.getDate() + "\n");
             writer.write("Title: " + entry.getTitle() + "\n");
             writer.write("Mood <3: " + entry.getMood() + "\n");
-            writer.write("Tag: " + entry.getTag() + "\n");
+            // writer.write("Tag: " + entry.getTag() + "\n");
             writer.write("---------------------------------------\n");
             writer.write(entry.getContent());
             System.out.println("\u001b[1;32m(^.^) Entry saved successfully!\u001B[0m");

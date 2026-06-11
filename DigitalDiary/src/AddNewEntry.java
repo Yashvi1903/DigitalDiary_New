@@ -47,10 +47,9 @@ public class AddNewEntry {
         System.out.println("\u001b[1;34m (^.^) Page added to your story!..Keep going!..\u001B[0m");
         System.out.println("---------------------------------------------");
         System.out.println();
-        System.out.print("Now time to enter your MOOD <3: ");
-        String mood = s1.nextLine().trim();
-        System.out.print("Give any tag(special event) to your diary: ");
-        String tag = s1.nextLine().trim();
+        String mood = MoodTracker.selectMood();
+        // System.out.print("Give any tag(special event) to your diary: ");
+        // String tag = s1.nextLine().trim();
 
 
         File folder = new File("Users/" + user.getUserID() + "/" + diary.getDiaryID() + "/" + dateFolder);
@@ -68,7 +67,14 @@ public class AddNewEntry {
         } catch (IOException e) {
             System.out.println("An error occurred while creating the file.");
         }
-        Entry neweEntry = new Entry(formattedDate, title, content, mood, tag, diary, user,filePath,true);
+        // Entry neweEntry = new Entry(formattedDate, title, content, mood,"", diary, user,filePath,true);
+        Entry neweEntry = new Entry.Builder(formattedDate, title, diary, user)
+        .content(content)
+        .mood(mood)
+        .filepath(filePath)
+        .writeToIndex(true)
+        .build();
+        
         UserFileManager.saveEntryToFile(neweEntry);
         return neweEntry;
     }

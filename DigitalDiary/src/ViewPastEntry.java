@@ -1,3 +1,4 @@
+
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class ViewPastEntry {
                         : "UnKnown Date";
                 String title = entry.getKey();
 
-                System.out.println(index + ". " + dateTime + " - " + entry.getValue());
+                System.out.println(index + ". " + dateTime + " - " + title);
                 indexToTitle.put(index, title);
                 index++;
             }
@@ -78,7 +79,7 @@ public class ViewPastEntry {
                 System.out.println("\u001B[33mDate: \u001B[0m" + entry.getDate());
                 System.out.println("\u001B[33mTitle: \u001B[0m" + entry.getTitle());
                 System.out.println("\u001B[33mMood: \u001B[0m" + entry.getMood());
-                System.out.println("\u001B[33mTag: \u001B[0m" + entry.getTag());
+                // System.out.println("\u001B[33mTag: \u001B[0m" + entry.getTag());
                 System.out.println("\n\u001B[33m------------- Content -------------\u001B[0m");
                 System.out.println(entry.getContent());
             } catch (Exception e) {
