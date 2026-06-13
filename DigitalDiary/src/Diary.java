@@ -48,7 +48,7 @@ public class Diary {
             System.out.println();
             System.out.println("\u001B[95m-------welcome Back to " + u1.getDiaryName() + ", by " + u1.getName()
                     + "--------\u001B[0m");
-            Scanner s1 = new Scanner(System.in);
+            Scanner s1 = AppContext.scanner();
             System.out.println();
             System.out.println("1.change profile");
             System.out.println("2.My Diaries");
@@ -79,7 +79,7 @@ public class Diary {
                         }
                         continue;
                     case 3:
-                        App.main(null);
+                        // App.main(null);
                         return;
                     default:
                         System.out.println("Please enter a valid choice...");
@@ -96,7 +96,7 @@ public class Diary {
     }
 
     public static Diary showMyDiariesMenu(User u1) {
-        Scanner s1 = new Scanner(System.in);
+        Scanner s1 = AppContext.scanner();
         UserFileManager.loadDiaryIndexFromFile(u1.getUserID(), u1);
         if (UserFileManager.getDiaryIndex().isEmpty()) {
             System.out.println();

@@ -1,3 +1,4 @@
+
 // DownloadEntry.java
 import java.io.*;
 import java.nio.file.*;
@@ -9,14 +10,14 @@ import java.util.Scanner;
 
 public class DownloadEntry {
 
-    public static final String ANSI_RESET  = "\u001B[0m";
-    public static final String ANSI_CYAN   = "\u001B[36m";
-    public static final String ANSI_GREEN  = "\u001B[32m";
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_RED    = "\u001B[31m";
+    public static final String ANSI_RED = "\u001B[31m";
 
-    public static void downloadMenu(Diary diary, User user) {
-        Scanner scanner = new Scanner(System.in);
+    public static void downloadMenu(Diary diary, User user,EntryRepository repo) {
+        Scanner scanner = AppContext.scanner();
 
         System.out.println(ANSI_CYAN + "\n╔════════════════════════════════════╗");
         System.out.println("║         Download / Export           ║");
@@ -35,20 +36,25 @@ public class DownloadEntry {
         }
 
         switch (choice) {
-            case 1: exportSingleEntry(diary, user); break;
-            case 2: exportAllEntries(diary, user);  break;
-            case 3: return;
-            default: System.out.println("Invalid choice.");
+            case 1:
+                exportSingleEntry(diary, user,repo);
+                break;
+            case 2:
+                exportAllEntries(diary, user,repo);
+                break;
+            case 3:
+                return;
+            default:
+                System.out.println("Invalid choice.");
         }
     }
 
-    
-    private static void exportSingleEntry(Diary diary, User user) {
-        Scanner scanner = new Scanner(System.in);
-        UserFileManager.loadEntryIndex(diary, user);
+    private static void exportSingleEntry(Diary diary, User user,EntryRepository repo) {
+        Scanner scanner = AppContext.scanner();
+        // UserFileManager.loadEntryIndex(diary, user);
 
-        Map<String, String> titleToPath  = UserFileManager.getTitleToPath();
-        Map<String, Entry>  pathToEntry  = UserFileManager.getPathToEntry();
+        Map<String, String> titleToPath = repo.getTitleToPath();
+        Map<String, Entry> pathToEntry = repo.getPathToEntry();
 
         if (titleToPath.isEmpty()) {
             System.out.println(ANSI_RED + "No entries found." + ANSI_RESET);
@@ -72,27 +78,35 @@ public class DownloadEntry {
         try {
             choice = Integer.parseInt(scanner.nextLine().trim());
         } catch (NumberFormatException e) {
-            System.out.println("Invalid input."); return;
+            System.out.println("Invalid input.");
+            return;
         }
-        if (choice == 0) return;
+        if (choice == 0)
+            return;
 
         String title = indexToTitle.get(choice);
-        if (title == null) { System.out.println("Invalid choice."); return; }
+        if (title == null) {
+            System.out.println("Invalid choice.");
+            return;
+        }
 
-        Entry entry = pathToEntry.get(titleToPath.get(title));
-        if (entry == null) { System.out.println("Entry not found."); return; }
+       Entry entry = repo.findByTitle(title).orElse(null);
+        if (entry == null) {
+            System.out.println("Entry not found.");
+            return;
+        }
 
         // Build export file
         String exportDir = "Exports/" + user.getUserName() + "/" + diary.getDiaryname();
-        String fileName  = sanitizeFileName(entry.getDate()) + "_" + sanitizeFileName(title) + ".txt";
+        String fileName = sanitizeFileName(entry.getDate()) + "_" + sanitizeFileName(title) + ".txt";
         writeEntryToFile(entry, exportDir, fileName);
     }
 
-    private static void exportAllEntries(Diary diary, User user) {
-        UserFileManager.loadEntryIndex(diary, user);
+    private static void exportAllEntries(Diary diary, User user,EntryRepository repo) {
+        
 
-        Map<String, String> titleToPath = UserFileManager.getTitleToPath();
-        Map<String, Entry>  pathToEntry = UserFileManager.getPathToEntry();
+        Map<String, String> titleToPath = repo.getTitleToPath();
+        Map<String, Entry> pathToEntry = repo.getPathToEntry();
 
         if (titleToPath.isEmpty()) {
             System.out.println(ANSI_RED + "No entries found." + ANSI_RESET);
@@ -117,11 +131,12 @@ public class DownloadEntry {
 
             for (Map.Entry<String, String> e : titleToPath.entrySet()) {
                 Entry entry = pathToEntry.get(e.getValue());
-                if (entry == null) continue;
+                if (entry == null)
+                    continue;
                 bw.write("----------------------------------------\n");
-                bw.write("Date  : " + entry.getDate()  + "\n");
+                bw.write("Date  : " + entry.getDate() + "\n");
                 bw.write("Title : " + entry.getTitle() + "\n");
-                bw.write("Mood  : " + entry.getMood()  + "\n");
+                bw.write("Mood  : " + entry.getMood() + "\n");
                 bw.write("----------------------------------------\n");
                 bw.write(entry.getContent());
                 bw.write("\n\n");
@@ -141,10 +156,10 @@ public class DownloadEntry {
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(out))) {
             bw.write("========================================\n");
-            bw.write("Date  : " + entry.getDate()  + "\n");
+            bw.write("Date  : " + entry.getDate() + "\n");
             bw.write("Title : " + entry.getTitle() + "\n");
-            bw.write("Mood  : " + entry.getMood()  + "\n");
-            bw.write("Tag   : " + entry.getTag()   + "\n");
+            bw.write("Mood  : " + entry.getMood() + "\n");
+            bw.write("Tag   : " + entry.getTag() + "\n");
             bw.write("========================================\n\n");
             bw.write(entry.getContent());
             System.out.println(ANSI_GREEN + "\n✔ Entry exported to: "

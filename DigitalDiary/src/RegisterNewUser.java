@@ -5,7 +5,7 @@ import java.util.UUID;
 public class RegisterNewUser {
 
     public static User Register() {
-        Scanner s1 = new Scanner(System.in);
+        Scanner s1 = AppContext.scanner();
         String username;
 
         while (true) {
@@ -25,18 +25,20 @@ public class RegisterNewUser {
         }
 
         System.out.print("Enter password (or -1 to exit): ");
-        String primary_key = PasswordUtils.hashPassword(s1.nextLine());
-        if (primary_key.trim().equals("-1")) {
+        String pwInput = s1.nextLine();
+        if (pwInput.trim().equals("-1")) {
             System.out.println("Returning to main menu...");
             return null;
         }
+        String primary_key = PasswordUtils.hashPassword(pwInput);
 
         System.out.print("Enter secondary password (or -1 to exit): ");
-        String Secondary_key = PasswordUtils.hashPassword(s1.nextLine());
-        if (Secondary_key.trim().equals("-1")) {
+        String secPwInput = s1.nextLine();
+        if (secPwInput.trim().equals("-1")) {
             System.out.println("Returning to main menu...");
             return null;
         }
+        String Secondary_key = PasswordUtils.hashPassword(secPwInput);
 
         System.out.print("Enter full name (or -1 to exit): ");
         String Name = s1.nextLine();

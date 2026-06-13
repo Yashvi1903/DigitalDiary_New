@@ -17,8 +17,8 @@ public class UserFileManager {
     private static final String Index_File = "Users/user_index.txt";
     private static Map<String, String> DiaryIndex = new HashMap<>();
     private static Map<String, Diary> DiaryObjMap = new HashMap<>();
-    private static Map<String, String> titleToPath = new LinkedHashMap<>();
-    private static Map<String, Entry> pathToEntry = new LinkedHashMap<>();
+    // private static Map<String, String> titleToPath = new LinkedHashMap<>();
+    // private static Map<String, Entry> pathToEntry = new LinkedHashMap<>();
 
     public static void saveToFile(User u1) {
         try (FileWriter writer = new FileWriter(new File(u1.getUserFolder(), "P_" + u1.getUserName() + ".txt"))) {
@@ -59,21 +59,21 @@ public class UserFileManager {
         }
     }
 
-    public static void saveEntryIndex(Diary diary, Entry entry) {
-        String userID = entry.getUser().getUserID();
-        String diaryID = diary.getDiaryID();
+    // public static void saveEntryIndex(Diary diary, Entry entry) {
+    //     String userID = entry.getUser().getUserID();
+    //     String diaryID = diary.getDiaryID();
 
-        String entryID = entry.getDate();
-        String filepath = entry.getFilePath();
+    //     String entryID = entry.getDate();
+    //     String filepath = entry.getFilePath();
 
-        File indexFile = new File("Users/" + userID + "/" + diaryID + "/entry_index.txt");
+    //     File indexFile = new File("Users/" + userID + "/" + diaryID + "/entry_index.txt");
 
-        try (FileWriter writer = new FileWriter(indexFile, true)) {
-            writer.write(entryID + "=" + filepath + "=" + entry.getTitle() + "\n");
-        } catch (IOException e) {
-            System.out.println("Failed to save entry index. ");
-        }
-    }
+    //     try (FileWriter writer = new FileWriter(indexFile, true)) {
+    //         writer.write(entryID + "=" + filepath + "=" + entry.getTitle() + "\n");
+    //     } catch (IOException e) {
+    //         System.out.println("Failed to save entry index. ");
+    //     }
+    // }
 
     public static void updateUser(User user) {
         File userProfile = new File(user.getUserFolder(), "P_" + user.getUserName() + ".txt");
@@ -145,91 +145,91 @@ public class UserFileManager {
     }
 
     // Rewrites the entire entry_index.txt from the current in-memory maps
-    public static void saveEntryIndex(Diary diary, User user) {
-        String path = "Users/" + user.getUserID() + "/" + diary.getDiaryID() + "/entry_index.txt";
-        File indexFile = new File(path);
+    // public static void saveEntryIndex(Diary diary, User user) {
+    //     String path = "Users/" + user.getUserID() + "/" + diary.getDiaryID() + "/entry_index.txt";
+    //     File indexFile = new File(path);
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexFile, false))) { // false = overwrite
-            for (Map.Entry<String, String> e : titleToPath.entrySet()) {
-                String title = e.getKey();
-                String filePath = e.getValue();
-                Entry entry = pathToEntry.get(filePath);
-                if (entry != null) {
-                    writer.write(entry.getDate() + "=" + filePath + "=" + title);
-                    writer.newLine();
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Failed to update entry index: " + e.getMessage());
-        }
-    }
+    //     try (BufferedWriter writer = new BufferedWriter(new FileWriter(indexFile, false))) { // false = overwrite
+    //         for (Map.Entry<String, String> e : titleToPath.entrySet()) {
+    //             String title = e.getKey();
+    //             String filePath = e.getValue();
+    //             Entry entry = pathToEntry.get(filePath);
+    //             if (entry != null) {
+    //                 writer.write(entry.getDate() + "=" + filePath + "=" + title);
+    //                 writer.newLine();
+    //             }
+    //         }
+    //     } catch (IOException e) {
+    //         System.out.println("Failed to update entry index: " + e.getMessage());
+    //     }
+    // }
 
-    public static void loadEntryIndex(Diary diary, User user) {
-        titleToPath.clear();
-        pathToEntry.clear();
-        String path = "Users/" + user.getUserID() + "/" + diary.getDiaryID() + "/entry_index.txt";
-        File file = new File(path);
+    // public static void loadEntryIndex(Diary diary, User user) {
+    //     titleToPath.clear();
+    //     pathToEntry.clear();
+    //     String path = "Users/" + user.getUserID() + "/" + diary.getDiaryID() + "/entry_index.txt";
+    //     File file = new File(path);
 
-        if (!file.exists()) {
-            System.out.println("No entries indexed yet.");
-            return;
-        }
+    //     if (!file.exists()) {
+    //         System.out.println("No entries indexed yet.");
+    //         return;
+    //     }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.trim().isEmpty() || !line.contains("="))
-                    continue;
-                String[] parts = line.split("=");
-                if (parts.length < 3)
-                    continue;
-                String entryID = parts[0].trim();
-                String filepath = parts[1].trim();
-                String title = parts[2].trim();
+    //     try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+    //         String line;
+    //         while ((line = reader.readLine()) != null) {
+    //             if (line.trim().isEmpty() || !line.contains("="))
+    //                 continue;
+    //             String[] parts = line.split("=");
+    //             if (parts.length < 3)
+    //                 continue;
+    //             String entryID = parts[0].trim();
+    //             String filepath = parts[1].trim();
+    //             String title = parts[2].trim();
 
-                File entryFile = new File("Users/" + user.getUserID() + "/" + diary.getDiaryID() + "/" + filepath);
-                if (!entryFile.exists())
-                    continue;
+    //             File entryFile = new File("Users/" + user.getUserID() + "/" + diary.getDiaryID() + "/" + filepath);
+    //             if (!entryFile.exists())
+    //                 continue;
 
-                try (BufferedReader entryReader = new BufferedReader(new FileReader(entryFile))) {
-                    String date = "", mood = "", tag = "", fileTitle = "";
-                    StringBuilder content = new StringBuilder();
-                    boolean contentStarted = false;
+    //             try (BufferedReader entryReader = new BufferedReader(new FileReader(entryFile))) {
+    //                 String date = "", mood = "", tag = "", fileTitle = "";
+    //                 StringBuilder content = new StringBuilder();
+    //                 boolean contentStarted = false;
 
-                    String entryLine;
-                    while ((entryLine = entryReader.readLine()) != null) {
-                        if (entryLine.startsWith("Date: ")) {
-                            date = entryLine.substring(6).trim();
-                        } else if (entryLine.startsWith("Title: ")) {
-                            fileTitle = entryLine.substring(7).trim();
-                        } else if (entryLine.startsWith("Mood <3: ")) {
-                            mood = entryLine.substring(9).trim();
-                        } else if (entryLine.startsWith("Tag: ")) {
-                            tag = entryLine.substring(5).trim();
-                        } else if (entryLine.startsWith("-----")) {
-                            contentStarted = true;
-                        } else if (contentStarted) {
-                            content.append(entryLine).append(System.lineSeparator());
-                        }
-                    }
+    //                 String entryLine;
+    //                 while ((entryLine = entryReader.readLine()) != null) {
+    //                     if (entryLine.startsWith("Date: ")) {
+    //                         date = entryLine.substring(6).trim();
+    //                     } else if (entryLine.startsWith("Title: ")) {
+    //                         fileTitle = entryLine.substring(7).trim();
+    //                     } else if (entryLine.startsWith("Mood <3: ")) {
+    //                         mood = entryLine.substring(9).trim();
+    //                     } else if (entryLine.startsWith("Tag: ")) {
+    //                         tag = entryLine.substring(5).trim();
+    //                     } else if (entryLine.startsWith("-----")) {
+    //                         contentStarted = true;
+    //                     } else if (contentStarted) {
+    //                         content.append(entryLine).append(System.lineSeparator());
+    //                     }
+    //                 }
 
-                    // Entry entry = new Entry(date, fileTitle, content.toString(), mood, tag,
-                    // diary, user, filepath,
-                    // false);
-                    Entry entry = new Entry.Builder(date, fileTitle, diary, user)
-                            .content(content.toString())
-                            .mood(mood)
-                            .filepath(filepath)
-                            .build();
-                    titleToPath.put(fileTitle, filepath);
-                    pathToEntry.put(filepath, entry);
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Error loading entry index.");
-        }
+    //                 // Entry entry = new Entry(date, fileTitle, content.toString(), mood, tag,
+    //                 // diary, user, filepath,
+    //                 // false);
+    //                 Entry entry = new Entry.Builder(date, fileTitle, diary, user)
+    //                         .content(content.toString())
+    //                         .mood(mood)
+    //                         .filepath(filepath)
+    //                         .build();
+    //                 titleToPath.put(fileTitle, filepath);
+    //                 pathToEntry.put(filepath, entry);
+    //             }
+    //         }
+    //     } catch (IOException e) {
+    //         System.out.println("Error loading entry index.");
+    //     }
 
-    }
+    // }
 
     public static void loadDiaryIndexFromFile(String userID, User user) {
         String path = "Users/" + userID + "/diary_index.txt";
@@ -260,7 +260,7 @@ public class UserFileManager {
         File indexFile = new File("Users/user_index.txt");
 
         if (!indexFile.exists()) {
-            System.out.println("Index file not found, starting fresh.");
+            System.out.println("\u001B[90mNo existing users found. Starting fresh.\u001B[0m");
             return;
         }
         try (Scanner scanner = new Scanner(indexFile)) {
@@ -307,31 +307,31 @@ public class UserFileManager {
         }
     }
 
-    public static void saveEntryToFile(Entry entry) {
-        String[] dateTimeParts = entry.getDate().split(" ");
-        String dateFolder = dateTimeParts[0];
-        String timePart = dateTimeParts[1].replace(":", "-");
+    // public static void saveEntryToFile(Entry entry) {
+    //     String[] dateTimeParts = entry.getDate().split(" ");
+    //     String dateFolder = dateTimeParts[0];
+    //     String timePart = dateTimeParts[1].replace(":", "-");
 
-        String path = "Users/" + entry.getUser().getUserID() + "/" + entry.getDiary().getDiaryID() + "/" + dateFolder;
+    //     String path = "Users/" + entry.getUser().getUserID() + "/" + entry.getDiary().getDiaryID() + "/" + dateFolder;
 
-        File folder = new File(path);
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
+    //     File folder = new File(path);
+    //     if (!folder.exists()) {
+    //         folder.mkdirs();
+    //     }
 
-        File file = new File(folder, timePart + ".txt");
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write("Date: " + entry.getDate() + "\n");
-            writer.write("Title: " + entry.getTitle() + "\n");
-            writer.write("Mood <3: " + entry.getMood() + "\n");
-            // writer.write("Tag: " + entry.getTag() + "\n");
-            writer.write("---------------------------------------\n");
-            writer.write(entry.getContent());
-            System.out.println("\u001b[1;32m(^.^) Entry saved successfully!\u001B[0m");
-        } catch (IOException e) {
-            System.out.println("Error saving the entry..");
-        }
-    }
+    //     File file = new File(folder, timePart + ".txt");
+    //     try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+    //         writer.write("Date: " + entry.getDate() + "\n");
+    //         writer.write("Title: " + entry.getTitle() + "\n");
+    //         writer.write("Mood <3: " + entry.getMood() + "\n");
+    //         // writer.write("Tag: " + entry.getTag() + "\n");
+    //         writer.write("---------------------------------------\n");
+    //         writer.write(entry.getContent());
+    //         System.out.println("\u001b[1;32m(^.^) Entry saved successfully!\u001B[0m");
+    //     } catch (IOException e) {
+    //         System.out.println("Error saving the entry..");
+    //     }
+    // }
 
     public static Map<String, String> getUserIndex() {
         return UserIndex;
@@ -349,12 +349,12 @@ public class UserFileManager {
         return DiaryObjMap;
     }
 
-    public static Map<String, String> getTitleToPath() {
-        return titleToPath;
-    }
+    // public static Map<String, String> getTitleToPath() {
+    //     return titleToPath;
+    // }
 
-    public static Map<String, Entry> getPathToEntry() {
-        return pathToEntry;
-    }
+    // public static Map<String, Entry> getPathToEntry() {
+    //     return pathToEntry;
+    // }
 
 }

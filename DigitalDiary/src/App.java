@@ -1,6 +1,5 @@
 import java.util.Scanner;
 
-
 public class App {
     public static void main(String[] args) {
         try {
@@ -13,27 +12,27 @@ public class App {
                 System.out.println("2.New User ");
                 System.out.println("3.EXIT Program");
                 System.out.print("Please enter your choice: ");
-                
-                Scanner scanner = new Scanner(System.in);
+
+                Scanner scanner = AppContext.scanner();
                 int choice = 0;
                 String line = scanner.nextLine().trim();
-                
+
                 if (line.isEmpty()) {
                     System.out.println("No input detected. Please enter a number.");
                     System.out.println("Press Enter to continue...");
                     scanner.nextLine();
                     continue;
                 }
-                
+
                 try {
                     choice = Integer.parseInt(line);
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     System.out.println("Invalid Input. Please enter a number.");
                     System.out.println("Press Enter to continue...");
                     scanner.nextLine();
                     continue;
                 }
-                
+
                 switch (choice) {
                     case 1:
                         try {
@@ -56,7 +55,8 @@ public class App {
                             User registereUser = RegisterNewUser.Register();
                             if (registereUser != null) {
                                 clearScreen();
-                                System.out.println("Registration successful! Welcome, " + "\u001B[31m" + registereUser.getName() + "\u001b[0m");
+                                System.out.println("Registration successful! Welcome, " + "\u001B[31m"
+                                        + registereUser.getName() + "\u001b[0m");
                                 Diary d1 = new Diary(registereUser, null, null, false);
                                 Diary.Diarymenu(registereUser);
                             }
@@ -83,8 +83,8 @@ public class App {
         }
     }
 
-     // for clear screen
-     public static void clearScreen() {
+    // for clear screen
+    public static void clearScreen() {
         System.out.println("\033[H\033[2J");
         System.out.flush();
     }

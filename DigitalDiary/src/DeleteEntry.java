@@ -3,14 +3,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-
 public class DeleteEntry {
-    public static void deleteEntry(Diary diary, User user) {
-        Scanner scanner = new Scanner(System.in);
-        UserFileManager.loadEntryIndex(diary, user);
-        Map<String, String> titleToPath = UserFileManager.getTitleToPath();
-        Map<String, Entry> pathToEntry = UserFileManager.getPathToEntry();
-
+    public static void deleteEntry(Diary diary, User user, EntryRepository repo) {
+        Scanner scanner = AppContext.scanner();
+        Map<String, String> titleToPath = repo.getTitleToPath();
+        Map<String, Entry> pathToEntry = repo.getPathToEntry();
 
         if (titleToPath.isEmpty()) {
             System.out.println("\u001B[31mNo entries found in this diary.\u001B[0m");
@@ -20,12 +17,10 @@ public class DeleteEntry {
         Map<Integer, String> indexToTitle = new HashMap<>();
         int index = 1;
 
-
         for (Map.Entry<String, String> entry : titleToPath.entrySet()) {
             String title = entry.getKey();
             String path = entry.getValue();
             Entry diaryEntry = pathToEntry.get(path);
-
 
             String dateTime = (diaryEntry != null && diaryEntry.getDate() != null) ? diaryEntry.getDate()
                     : "Unknown Date";
@@ -42,23 +37,21 @@ public class DeleteEntry {
             return;
         }
 
-
         if (choice == 0) {
             System.out.println("Deletion canceled.");
             return;
         }
-
 
         if (!indexToTitle.containsKey(choice)) {
             System.out.println("Invalid choice. No such entry.");
             return;
         }
         String selectedTitle = indexToTitle.get(choice);
-        String filePath = titleToPath.get(selectedTitle);
+        // String filePath = titleToPath.get(selectedTitle);
         // File entryFile = new File(filePath);
 
-        File entryFile = new File("Users/" + user.getUserID() + "/" + diary.getDiaryID() + "/" + filePath);
-
+        // File entryFile = new File("Users/" + user.getUserID() + "/" +
+        // diary.getDiaryID() + "/" + filePath);
 
         System.out.print("Are you sure you want to delete \"" + selectedTitle + "\"? (yes/no): ");
         String confirmation = scanner.nextLine().trim();
@@ -67,22 +60,11 @@ public class DeleteEntry {
             return;
         }
 
-
-        if (entryFile.exists() && entryFile.delete()) {
+        if (repo.delete(selectedTitle, diary, user)) {
             System.out.println("Entry deleted successfully.");
-
-
-            // Clean up maps
-            titleToPath.remove(selectedTitle);
-            pathToEntry.remove(filePath);
-
-            UserFileManager.saveEntryIndex(diary, user);
         } else {
             System.out.println("Failed to delete the entry.");
         }
 
-
     }
 }
-
-

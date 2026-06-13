@@ -4,16 +4,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-
-
-
 public class AddNewEntry {
 
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_YELLOW = "\u001B[33m";
 
-    public static Entry AddEntry(Diary diary, User user) {
+    public static Entry AddEntry(Diary diary, User user,EntryRepository repo) {
 
         LocalDateTime now = LocalDateTime.now();
         String formattedDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -29,7 +26,7 @@ public class AddNewEntry {
         System.out.println(ANSI_YELLOW + "Date: " + dateFolder + "     Time: " + time + ANSI_RESET);
         System.out.println();
 
-        Scanner s1 = new Scanner(System.in);
+        Scanner s1 = AppContext.scanner();
         String title;
         System.out.print("Give Title: ");
         title = s1.nextLine().trim();
@@ -51,7 +48,6 @@ public class AddNewEntry {
         // System.out.print("Give any tag(special event) to your diary: ");
         // String tag = s1.nextLine().trim();
 
-
         File folder = new File("Users/" + user.getUserID() + "/" + diary.getDiaryID() + "/" + dateFolder);
         if (!folder.exists()) {
             folder.mkdirs();
@@ -67,15 +63,15 @@ public class AddNewEntry {
         } catch (IOException e) {
             System.out.println("An error occurred while creating the file.");
         }
-        // Entry neweEntry = new Entry(formattedDate, title, content, mood,"", diary, user,filePath,true);
+        // Entry neweEntry = new Entry(formattedDate, title, content, mood,"", diary,
+        // user,filePath,true);
         Entry neweEntry = new Entry.Builder(formattedDate, title, diary, user)
-        .content(content)
-        .mood(mood)
-        .filepath(filePath)
-        .writeToIndex(true)
-        .build();
-        
-        UserFileManager.saveEntryToFile(neweEntry);
+                .content(content)
+                .mood(mood)
+                .filepath(filePath)
+                .build();
+
+        repo.save(neweEntry);
         return neweEntry;
     }
 }

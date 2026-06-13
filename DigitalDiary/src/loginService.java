@@ -2,12 +2,12 @@ import java.util.Scanner;
 
 public class loginService {
     public static User login() {
-        Scanner s1 = new Scanner(System.in);
+        Scanner s1 = AppContext.scanner();
 
         // ── Username check ──
         System.out.print("\u001B[32mPlease enter the Username: \u001B[0m");
-        String enteredUsername = s1.nextLine();
-        if (enteredUsername.trim().isEmpty()) {
+        String enteredUsername = s1.nextLine().trim();
+        if (enteredUsername.isEmpty()) {
             System.out.println("\u001B[31mUsername cannot be empty.\u001B[0m");
             return null;
         }
@@ -19,13 +19,17 @@ public class loginService {
         }
 
         User u = UserFileManager.getUserObjMap().get(enteredUsername);
+        if (u == null) {
+            System.out.println("\u001B[31mUser data not found. Please register again.\u001B[0m");
+            return null;
+        }
 
         // ── Primary key — 3 attempts ──
         int count = 0;
         while (count < 3) {
             System.out.print("\u001B[32mPlease enter the Password: \u001B[0m");
             String enteredPassword = s1.nextLine();
-            if (u != null && PasswordUtils.checkPassword(enteredPassword, u.getPrimary_key())) {
+            if (PasswordUtils.checkPassword(enteredPassword, u.getPrimary_key())) {
                 System.out.println("\u001B[34mLogin successful! Welcome back, " + u.getName() + "\u001B[0m");
                 return u;
             } else {

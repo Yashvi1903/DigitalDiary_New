@@ -7,29 +7,30 @@ import java.util.Scanner;
 public class ChangeProfile {
 
     static void YourProfile(User u1) {
-    File profileFile = new File(u1.getUserFolder(), "P_" + u1.getUserName() + ".txt");
-    try (BufferedReader reader = new BufferedReader(new FileReader(profileFile))) {
-        String line;
-        System.out.println("\u001B[36m=== Your Profile ===\u001B[0m");
-        while ((line = reader.readLine()) != null) {
-            // Skip sensitive fields
-            if (line.startsWith("UserID: ") ||
-                line.startsWith("Primary Key: ") ||
-                line.startsWith("Secondary Key: ")) {
-                continue;
+        File profileFile = new File(u1.getUserFolder(), "P_" + u1.getUserName() + ".txt");
+        try (BufferedReader reader = new BufferedReader(new FileReader(profileFile))) {
+            String line;
+            System.out.println("\u001B[36m=== Your Profile ===\u001B[0m");
+            while ((line = reader.readLine()) != null) {
+                // Skip sensitive fields
+                if (line.startsWith("UserID: ") ||
+                        line.startsWith("Primary Key: ") ||
+                        line.startsWith("Secondary Key: ")) {
+                    continue;
+                }
+                System.out.println(line);
             }
-            System.out.println(line);
+            // Show password status without revealing the value
+            System.out.println("Primary Key: " + "\u001B[32m[SET]\u001B[0m");
+            System.out.println("Secondary Key: " + "\u001B[32m[SET]\u001B[0m");
+            System.out.println("\u001B[36m====================\u001B[0m");
+        } catch (IOException e) {
+            System.out.println("User not found!..");
         }
-        // Show password status without revealing the value
-        System.out.println("Primary Key: " + "\u001B[32m[SET]\u001B[0m");
-        System.out.println("Secondary Key: " + "\u001B[32m[SET]\u001B[0m");
-        System.out.println("\u001B[36m====================\u001B[0m");
-    } catch (IOException e) {
-        System.out.println("User not found!..");
     }
-}
+
     public static void changeYourProfile(User user) {
-        Scanner s1 = new Scanner(System.in);
+        Scanner s1 = AppContext.scanner();
         while (true) {
             YourProfile(user);
             System.out.println();
