@@ -12,7 +12,7 @@ public class Diary {
     private String diaryID;
     protected static Map<String, String> DiaryIndex = new HashMap<>();
     protected static Map<String, Diary> DiaryObjMap = new HashMap<>();
-    User u1;
+    private User u1;
 
     public static String getDiaryIndexPath(User u) {
         return "Users/" + u.getUserID() + "/diary_index.txt";
@@ -25,6 +25,8 @@ public class Diary {
     public String getDiaryID() {
         return diaryID;
     }
+
+    public User getUser() { return u1; }
 
     Diary(User user, String diaryname, String diaryID, boolean writeToIndex) {
         this.u1 = user;
@@ -44,7 +46,7 @@ public class Diary {
 
     public static void Diarymenu(User u1) {
         while (true) {
-            UserFileManager.loadFromIndexFile();
+            // UserFileManager.loadFromIndexFile();
             System.out.println();
             System.out.println("\u001B[95m-------welcome Back to " + u1.getDiaryName() + ", by " + u1.getName()
                     + "--------\u001B[0m");
@@ -168,8 +170,12 @@ public class Diary {
             }
 
             System.out.println();
-            System.out.println("Enter the number of the diary you want to open, or type 'new' to create one: ");
+            System.out.println(
+                    "Enter the number of the diary you want to open, type 'new' to create one, or type '-1' to go back: ");
             String input = s1.nextLine().trim();
+            if (input.equalsIgnoreCase("-1")) {
+                return null;
+            }
 
             if (input.equalsIgnoreCase("new")) {
                 while (true) {

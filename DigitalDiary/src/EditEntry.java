@@ -98,7 +98,7 @@ public class EditEntry {
             }
 
             System.out.println("\n" + ANSI_RED
-                    + "⚠️  IMPORTANT: After editing, you MUST save the file (Ctrl+S) before closing the tab to update your diary!"
+                    + "IMPORTANT: After editing, you MUST save the file (Ctrl+S) before closing the tab to update your diary!"
                     + ANSI_RESET);
             System.out.println(ANSI_CYAN + "Opening file for editing..." + ANSI_RESET);
 

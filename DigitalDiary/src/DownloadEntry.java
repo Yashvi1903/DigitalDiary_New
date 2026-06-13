@@ -20,7 +20,7 @@ public class DownloadEntry {
         Scanner scanner = AppContext.scanner();
 
         System.out.println(ANSI_CYAN + "\n╔════════════════════════════════════╗");
-        System.out.println("║         Download / Export           ║");
+        System.out.println("║         Download / Export          ║");
         System.out.println("╚════════════════════════════════════╝" + ANSI_RESET);
         System.out.println("1. Export a single entry");
         System.out.println("2. Export ALL entries from this diary");

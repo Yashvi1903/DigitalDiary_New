@@ -74,7 +74,12 @@ public class RegisterNewUser {
         }
 
         System.out.print("Enter the name of your diary (or -1 to exit): ");
-        String diaryname = s1.nextLine();
+        String diaryname = s1.nextLine().trim();
+        while (diaryname.isEmpty()) {
+            System.out.println("Diary name cannot be empty.");
+            System.out.print("Enter the name of your diary: ");
+            diaryname = s1.nextLine().trim();
+        }
         if (diaryname.trim().equals("-1")) {
             System.out.println("Returning to main menu...");
             return null;

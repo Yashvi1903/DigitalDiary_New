@@ -131,7 +131,7 @@ public class Entry {
                 // UserFileManager.loadEntryIndex(diary, user);
                 App.clearScreen();
                 System.out.println("\u001B[95m------- welcome Back to " + diary.getDiaryname() + ", by "
-                        + diary.u1.getName() + " -------- \u001B[0m");
+                        + diary.getUser().getName() + " -------- \u001B[0m");
                 System.out.println();
                 System.out.println("1. Add Entry");
                 System.out.println("2. View Entry");
@@ -166,8 +166,8 @@ public class Entry {
                         break;
                     case 3:
                         App.clearScreen();
-                        Diary.Diarymenu(user);
                         System.out.println("Going back to diary menu...");
+                         Diary.showMyDiariesMenu(user);
                         return;
                     case 4:
                         App.clearScreen();
@@ -184,6 +184,7 @@ public class Entry {
                     case 7:
                         App.clearScreen();
                         System.out.println("Going back to main menu...");
+                        Diary.Diarymenu(user);
                         return;
                     default:
                         System.out.println("Invalid choice. Please enter a valid choice...");
